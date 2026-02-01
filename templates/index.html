@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="et">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Koidulauliku E-laulik</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lora:ital@0;1&display=swap');
+
+        body {
+            background: #fdfaf4 url('https://www.transparenttextures.com/patterns/pinstriped-suit.png');
+            color: #2c1e1a;
+            font-family: 'Lora', serif;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 850px;
+            margin: auto;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border: 1px solid #dcd3bc;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
+            border-radius: 2px;
+        }
+
+        header {
+            text-align: center;
+            border-bottom: 1px solid #b5a48b;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3em;
+            margin-bottom: 10px;
+            color: #4e342e;
+        }
+
+        .quote-box {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-size: 1.3em;
+            text-align: center;
+            color: #795548;
+            margin: 30px 0;
+            padding: 20px;
+            border-top: 1px solid #eee;
+            border-bottom: 1px solid #eee;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 40px;
+            border: 1px solid #b5a48b;
+            background: #fffdf9;
+            font-size: 1em;
+            box-sizing: border-box;
+            font-family: inherit;
+        }
+
+        .news-card {
+            margin-bottom: 50px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid #f0ece0;
+            transition: 0.3s;
+        }
+
+        .news-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .source {
+            font-size: 0.75em;
+            text-transform: uppercase;
+            color: #a1887f;
+            letter-spacing: 2px;
+            font-weight: bold;
+        }
+
+        h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8em;
+            margin: 15px 0;
+            color: #3e2723;
+        }
+
+        .keywords {
+            margin: 15px 0;
+        }
+
+        .keywords span {
+            background: #f5f0e6;
+            padding: 4px 12px;
+            border-radius: 3px;
+            font-size: 0.8em;
+            margin-right: 8px;
+            color: #5d4037;
+            border: 1px solid #e0d8c3;
+            cursor: pointer;
+        }
+
+        .keywords span:hover {
+            background: #8d6e63;
+            color: white;
+        }
+
+        .read-more {
+            color: #a67c52;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.9em;
+            border-bottom: 1px solid transparent;
+        }
+
+        .read-more:hover {
+            border-bottom: 1px solid #a67c52;
+        }
+
+        footer {
+            text-align: center;
+            font-size: 0.8em;
+            color: #9e9e9e;
+            margin-top: 50px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>Koidulauliku E-laulik</h1>
+            <p>Eestimaa kultuuri häälekandja vaimuilmale</p>
+            <p style="text-align: center; color: #8d6e63; font-size: 0.9em;">
+                Hetkel sirvitakse <strong>{{ culture_items|length }}</strong> värsket Eesti kultuuriuudist.
+            </p>
+        </header>
+
+        <div class="quote-box">
+            "{{ quote }}"
+        </div>
+
+        <input type="text" id="vaimuOtsing" class="search-box"
+            placeholder="Otsi Eesti kultuuri, märksõnade või sündmuste järgi...">
+
+        <div id="content">
+            {% for item in culture_items %}
+            <div class="news-card">
+                <div class="source">{{ item.source }} | {{ item.date }}</div>
+                <h2>{{ item.title }}</h2>
+                <p>{{ item.summary | truncate(300) }}</p>
+                <div class="keywords">
+                    {% for word in item.keywords %}
+                    <span onclick="applyFilter('{{ word }}')">#{{ word }}</span>
+                    {% endfor %}
+                </div>
+                <a href="{{ item.link }}" class="read-more" target="_blank">Loe täisteksti edasi...</a>
+            </div>
+            {% endfor %}
+        </div>
+
+        <footer>
+            &copy; 2026 Koidulauliku Digipärand | Kõik allikad pärinevad usaldusväärsetest Eesti kultuurikanalitest.
+        </footer>
+    </div>
+
+    <script>
+        function applyFilter(val) {
+            const search = document.getElementById('vaimuOtsing');
+            search.value = val;
+            search.dispatchEvent(new Event('keyup'));
+        }
+
+        document.getElementById('vaimuOtsing').addEventListener('keyup', function () {
+            let filter = this.value.toLowerCase().trim();
+            document.querySelectorAll('.news-card').forEach(card => {
+                let text = card.innerText.toLowerCase();
+                card.style.display = text.includes(filter) ? '' : 'none';
+            });
+        });
+    </script>
+</body>
+
+</html>
